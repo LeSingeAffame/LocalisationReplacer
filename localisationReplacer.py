@@ -1,7 +1,10 @@
-from os import listdir
-from os.path import isfile, join
+###
+# Localisation Replacer for Stellaris
+# By LeSingeAffame
+###
 
-import os
+from os import listdir, makedirs
+from os.path import isfile, join, exists
 
 import shutil
 
@@ -14,8 +17,8 @@ onlyfiles = [f for f in listdir(base_localisation_path) if isfile(join(base_loca
 
 for language in languages: # Check if directory exist. If they don't, create them
 	directory = mypath + "\\" + language
-	if not os.path.exists(directory):
-		os.makedirs(directory)
+	if not exists(directory):
+		makedirs(directory)
 
 
 for file in onlyfiles:
@@ -26,3 +29,14 @@ for file in onlyfiles:
 		fileCompleteName = fileBaseName + language + ".yml"
 		fileCompleteLink = mypath + "\\" + language + "\\" + fileCompleteName
 		shutil.copy2(fileBaseCompleteLink, fileCompleteLink) # complete target filename given
+		
+		### Replace the l_english by l_LANGUAGE
+		file = open(fileCompleteLink, 'r') 
+		fileContent = file.readlines()
+		fileContent[0] = fileContent[0].replace('english', language)
+		file.close()
+		
+		file = open(fileCompleteLink, 'w')
+		for line in fileContent:
+			file.write(line)
+		file.close()
